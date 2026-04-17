@@ -700,7 +700,7 @@ class _ProcessPlannerWorkspaceState extends State<ProcessPlannerWorkspace> {
                     border: Border.all(color: dark ? Colors.white12 : Colors.grey.shade200),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: _tableHeaders.isEmpty
+                  child: _tableRows.isEmpty
                       ? Padding(
                           padding: const EdgeInsets.all(24.0),
                           child: Center(
@@ -716,9 +716,9 @@ class _ProcessPlannerWorkspaceState extends State<ProcessPlannerWorkspace> {
                             dividerColor: dark ? Colors.white12 : Colors.grey.shade200,
                           ),
                           child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
+                            scrollDirection: Axis.horizontal,
                             child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
+                              scrollDirection: Axis.vertical,
                               child: DataTable(
                                 headingRowColor: WidgetStateProperty.all(
                                   dark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF8F9FA),
@@ -737,13 +737,11 @@ class _ProcessPlannerWorkspaceState extends State<ProcessPlannerWorkspace> {
                                 columnSpacing: 24,
                                 horizontalMargin: 16,
                                 columns: [
-                                  // Use actual Excel headers if available, otherwise default
-                                  ...(_tableHeaders.isNotEmpty 
-                                    ? _tableHeaders 
-                                    : ['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5', 'Column 6']
-                                  ).map((h) => DataColumn(
-                                        label: SizedBox(
+                                  // Only show actual Excel headers from uploaded file
+                                  ..._tableHeaders.map((h) => DataColumn(
+                                        label: Container(
                                           width: 140,
+                                          padding: const EdgeInsets.symmetric(vertical: 8),
                                           child: Text(
                                             h,
                                             style: TextStyle(
@@ -756,12 +754,6 @@ class _ProcessPlannerWorkspaceState extends State<ProcessPlannerWorkspace> {
                                           ),
                                         ),
                                       )),
-                                  const DataColumn(
-                                    label: Text(
-                                      'Actions',
-                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
                                 ],
                                 rows: _tableRows.asMap().entries.map((entry) {
                                   final index = entry.key;
@@ -781,38 +773,7 @@ class _ProcessPlannerWorkspaceState extends State<ProcessPlannerWorkspace> {
                                               ),
                                             ),
                                           )),
-                                      DataCell(Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit_outlined, size: 18, color: Colors.blue),
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {},
-                                          ),
-                                          const SizedBox(width: 8),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {},
-                                          ),
-                                          const SizedBox(width: 8),
-                                          IconButton(
-                                            icon: Icon(Icons.arrow_upward, size: 18, color: iconColor),
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {},
-                                          ),
-                                          const SizedBox(width: 8),
-                                          IconButton(
-                                            icon: Icon(Icons.arrow_downward, size: 18, color: iconColor),
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {},
-                                          ),
-                                        ],
-                                      )),
+                                      // Actions column removed - only showing Excel data
                                     ],
                                   );
                                 }).toList(),
